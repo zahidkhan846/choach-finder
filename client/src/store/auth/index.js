@@ -1,4 +1,5 @@
 import axios from "../../config/axiosConfig.js";
+import jwt_decode from "jwt-decode";
 
 export default {
   state() {
@@ -64,6 +65,13 @@ export default {
     async isUserLoggedIn(context) {
       const token = localStorage.getItem("token");
       if (!token) return;
+      const { exp: expiresIn } = jwt_decode(token);
+      const expirationTime = new Date(expiresIn * 1000);
+      const currentTime = new Date();
+      if (currentTime > expirationTime) {
+        context.dispatch("logoutAction");
+        return;
+      }
       context.commit("setIsAuthenticated", true);
       try {
         const res = await axios.post("/current-user", { token });

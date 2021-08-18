@@ -39,6 +39,7 @@ export default {
       };
       await this.$store.dispatch("signInAction", user);
       this.$router.replace("/");
+      window.location.reload();
     },
   },
   data() {

@@ -15,7 +15,6 @@ export default {
   components: {
     TheHeader,
   },
-
   methods: {
     async checkUserStatus() {
       await this.$store.dispatch("isUserLoggedIn");
