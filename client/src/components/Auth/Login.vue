@@ -6,15 +6,19 @@
         <div class="form-control">
           <label for="email">Email</label
           ><input type="text" id="email" v-model.trim="email" />
-          <small>Must be valid email.</small>
+          <small :class="{ active: userErrors.email }">{{
+            userErrors.email || "Must be a valid email address."
+          }}</small>
         </div>
         <div class="form-control">
           <label for="password">Password</label
-          ><input type="text" id="password" v-model.trim="password" />
-          <small>Must be 6 characters long.</small>
+          ><input type="password" id="password" v-model.trim="password" />
+          <small :class="{ active: userErrors.password }">{{
+            userErrors.password || "Must be 6 characters long."
+          }}</small>
         </div>
         <div class="form-control btn-group">
-          <base-button mode="primary" link to="/register-user"
+          <base-button mode="light" link to="/register-user"
             >GO TO REGISTER</base-button
           >
           <base-button type="submit">LOGIN</base-button>
@@ -28,12 +32,25 @@
 export default {
   name: "Login",
   methods: {
-    handleFormSubmit() {
-      //
+    async handleFormSubmit() {
+      const user = {
+        email: this.email,
+        password: this.password,
+      };
+      await this.$store.dispatch("signInAction", user);
+      this.$router.replace("/");
     },
   },
   data() {
-    return { email: "", password: "" };
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  computed: {
+    userErrors() {
+      return this.$store.getters.userErrors;
+    },
   },
 };
 </script>
@@ -77,11 +94,15 @@ h2 {
 }
 
 small {
-  color: var(--primary-color);
+  color: rgb(155, 152, 152);
   font-style: italic;
 }
 
 h2 {
   font-size: 2rem;
+}
+
+.active {
+  color: var(--danger-color);
 }
 </style>

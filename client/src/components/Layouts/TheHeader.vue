@@ -1,13 +1,20 @@
 <template>
   <header>
     <div>
-      <img src="../../assets/logo.png" alt="logo" />
       <h2>Skill<span>Find</span></h2>
     </div>
     <nav>
       <ul>
-        <li><router-link to="/coaches">All Coaches</router-link></li>
-        <li><router-link to="/requests">Requests</router-link></li>
+        <li><router-link to="/coaches">Coaches</router-link></li>
+        <li>
+          <router-link to="/requests" v-if="isAuth && isCoach"
+            >Requests</router-link
+          >
+        </li>
+        <li>
+          <router-link to="/register-user" v-if="!isAuth">Sign Up</router-link>
+          <button @click="handleLogout" v-if="isAuth">Logout</button>
+        </li>
       </ul>
     </nav>
   </header>
@@ -16,6 +23,19 @@
 <script>
 export default {
   name: "TheHeader",
+  computed: {
+    isAuth() {
+      return this.$store.getters.isAuthenticated;
+    },
+    isCoach() {
+      return this.$store.getters.isCoach;
+    },
+  },
+  methods: {
+    handleLogout() {
+      this.$store.dispatch("logoutAction");
+    },
+  },
 };
 </script>
 
@@ -38,10 +58,6 @@ header {
   z-index: 100;
 }
 
-img {
-  height: 40px;
-}
-
 div {
   display: flex;
   justify-content: center;
@@ -56,25 +72,45 @@ span {
 ul {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.25rem;
 }
 
-a {
+a,
+button {
   display: inline-block;
-  padding: 0.6rem 1.2rem;
+  padding: 0.5rem 1rem;
   background: transparent;
   color: var(--light-color);
-  border: none;
+  border: 2px solid transparent;
+  border-radius: 5px;
   outline: none;
 
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-a:hover,
+button {
+  border: 2px solid var(--danger-color);
+  background: var(--danger-color);
+}
+
+button:hover {
+  border: 2px solid var(--light-color);
+  background: var(--light-color);
+  color: var(--danger-color);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+a:hover {
+  color: var(--primary-color);
+}
+
 a:active,
 a.router-link-active {
-  background: var(--success-color);
-  color: var(--dark-color);
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
 }
 
 @media (max-width: 500px) {

@@ -3,8 +3,15 @@
     <base-card>
       <div class="control-buttons">
         <base-button @click="loadCoaches">Refresh All Coaches</base-button>
-        <base-button link to="/register" mode="light"
+        <base-button
+          link
+          to="/register-coach"
+          mode="light"
+          v-if="isAuthenticated && !isCoach"
           >Register as Coach</base-button
+        >
+        <base-button link to="/login" mode="light" v-if="!isAuthenticated"
+          >Login</base-button
         >
       </div>
     </base-card>
@@ -23,13 +30,13 @@
         <div class="backdrop"></div>
         <div class="modal">
           <header>
-            <h2>An error occurred!</h2>
+            <h2>An error occurred</h2>
             <button class="modal-button" @click="handleModalClose">
               &#x2715;
             </button>
           </header>
           <main>
-            <p>{{ error.message || "Something went wrong." }}</p>
+            <p>{{ error.message }}</p>
           </main>
         </div>
       </teleport>
@@ -89,8 +96,11 @@ export default {
     },
   },
   computed: {
-    setError() {
-      return this.error.message;
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
+    isCoach() {
+      return this.$store.getters.isCoach;
     },
     filteredCoaches() {
       return this.$store.getters["coaches/allCoaches"].filter((c) => {

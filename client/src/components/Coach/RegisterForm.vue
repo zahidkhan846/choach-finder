@@ -119,7 +119,7 @@ export default {
     handleCancel() {
       this.$router.push("/coaches");
     },
-    handleFormSubmit() {
+    async handleFormSubmit() {
       this.errors = {};
       if (this.firstName === "") {
         this.errors.firstName = "First Name must not be empty.";
@@ -149,8 +149,9 @@ export default {
         areas: this.areas,
       };
 
-      this.$store.dispatch("coaches/addCoach", newCoach);
+      await this.$store.dispatch("coaches/addCoach", newCoach);
       this.$router.push("/coaches");
+      window.location.reload();
     },
   },
 };

@@ -58,7 +58,7 @@ button:active {
 
 .light {
   background-color: var(--light-color);
-  color: var(--dark-color);
+  color: var(--primary-color);
   box-shadow: none;
   border: none;
   outline: none;

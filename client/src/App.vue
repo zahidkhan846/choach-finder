@@ -1,6 +1,5 @@
 <template>
   <TheHeader />
-
   <router-view v-slot="slotProps">
     <transition name="route" mode="out-in">
       <component :is="slotProps.Component"></component>
@@ -15,6 +14,15 @@ export default {
   name: "App",
   components: {
     TheHeader,
+  },
+
+  methods: {
+    async checkUserStatus() {
+      await this.$store.dispatch("isUserLoggedIn");
+    },
+  },
+  created() {
+    this.checkUserStatus();
   },
 };
 </script>

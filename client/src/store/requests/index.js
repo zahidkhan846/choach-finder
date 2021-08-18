@@ -20,11 +20,8 @@ export default {
     },
   },
   getters: {
-    getAllRequests(state, _, __, rootGetters) {
-      const loggedInUser = rootGetters.currentUser;
-      return state.allRequests.filter(
-        (allRequest) => allRequest.coachId === loggedInUser.id
-      );
+    getAllRequests(state) {
+      return state.allRequests;
     },
     allErrors(state) {
       return state.requestErrors;
@@ -40,7 +37,7 @@ export default {
       }
     },
     async fetchAllRequests(context) {
-      const currUserId = context.rootGetters.currentUser.id;
+      const currUserId = context.rootGetters.currentUser.coachId;
       try {
         const res = await axios.get(`/all-requests/${currUserId}`);
         const allRequests = res.data;

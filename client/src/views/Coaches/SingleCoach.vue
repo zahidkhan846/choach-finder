@@ -6,6 +6,10 @@
         <h1>Loading...</h1></base-card
       >
     </div>
+    <section v-else-if="error" class="center flex">
+      <p class="error-text">{{ error }}</p>
+      <router-link to="/coaches">Go to the All Coaches</router-link>
+    </section>
     <section v-else>
       <header>
         <h1>{{ fullName }}</h1>
@@ -28,7 +32,6 @@
         <base-button link :to="contactLink">Contact Here</base-button>
       </main>
     </section>
-
     <div class="modal">
       <router-view></router-view>
     </div>
@@ -56,13 +59,13 @@ export default {
       try {
         this.isLoading = true;
         const res = await axios.get(`/all-coaches/${this.id}`);
-        if (!res.data) throw new Error(`Cannot get current coach`);
-        this.selectedCoach = res.data;
-        this.isLoading = false;
+        if (res.data) {
+          this.selectedCoach = res.data;
+        }
       } catch (error) {
-        this.error.message = error.message;
-        this.isLoading = false;
+        this.error = error.response.data.error;
       }
+      this.isLoading = false;
     },
   },
 
@@ -156,5 +159,25 @@ ul {
   padding: 1rem 1.5rem;
   background-color: var(--success-color);
   font-size: 1.2rem;
+}
+
+.flex {
+  flex-direction: column;
+}
+
+.error-text {
+  margin-top: 3rem;
+  font-size: 1.5rem;
+}
+
+.center a {
+  margin-top: 2rem;
+  background-color: var(--success-color);
+  padding: 1rem 1.5rem;
+  border-radius: 5px;
+}
+
+.center a:hover {
+  opacity: 0.9;
 }
 </style>

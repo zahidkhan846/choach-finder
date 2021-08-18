@@ -6,20 +6,38 @@
         <div class="form-control">
           <label for="email">Full Name</label
           ><input type="text" id="name" v-model.trim="name" />
-          <small>Must be valid name.</small>
+          <small :class="{ active: userErrors.name }">{{
+            userErrors.name || "Must not be empty."
+          }}</small>
         </div>
         <div class="form-control">
           <label for="email">Email</label
           ><input type="text" id="email" v-model.trim="email" />
-          <small>Must be valid email.</small>
+          <small :class="{ active: userErrors.email }">{{
+            userErrors.email || "Must be a valid email address."
+          }}</small>
         </div>
         <div class="form-control">
           <label for="password">Password</label
-          ><input type="text" id="password" v-model.trim="password" />
-          <small>Must be 6 characters long.</small>
+          ><input type="password" id="password" v-model.trim="password" />
+          <small :class="{ active: userErrors.password }">{{
+            userErrors.password || "Must be 6 characters long."
+          }}</small>
+        </div>
+        <div class="form-control">
+          <label for="confirm-password">Confirm Password</label
+          ><input
+            type="password"
+            id="confirm-password"
+            v-model.trim="confirmPassword"
+            @blur="errors.confirmPassword = null"
+          />
+          <small :class="{ active: errors.confirmPassword }">{{
+            errors.confirmPassword || "Please confirm your password."
+          }}</small>
         </div>
         <div class="form-control btn-group">
-          <base-button mode="primary" link to="/login">GO TO LOGIN</base-button>
+          <base-button mode="light" link to="/login">GO TO LOGIN</base-button>
           <base-button type="submit">REGISTER</base-button>
         </div>
       </form>
@@ -31,12 +49,33 @@
 export default {
   name: "Register",
   methods: {
-    handleFormSubmit() {
-      //
+    async handleFormSubmit() {
+      if (this.password !== this.confirmPassword) {
+        this.errors.confirmPassword = "Password does not match.";
+        return;
+      }
+      const newUser = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+      };
+      await this.$store.dispatch("signUpAction", newUser);
+      this.$router.replace("/login");
     },
   },
   data() {
-    return { name: "", email: "", password: "" };
+    return {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      errors: {},
+    };
+  },
+  computed: {
+    userErrors() {
+      return this.$store.getters.userErrors;
+    },
   },
 };
 </script>
@@ -80,11 +119,15 @@ h2 {
 }
 
 small {
-  color: var(--primary-color);
+  color: rgb(155, 152, 152);
   font-style: italic;
 }
 
 h2 {
   font-size: 2rem;
+}
+
+.active {
+  color: var(--danger-color);
 }
 </style>

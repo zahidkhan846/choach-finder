@@ -5,7 +5,6 @@ export default {
   state() {
     return {
       allCoaches: [],
-      coachErrors: null,
     };
   },
   mutations: {
@@ -26,27 +25,30 @@ export default {
     hasCoaches(state) {
       return state.allCoaches && state.allCoaches.length > 0;
     },
-    allErrors(state) {
-      return state.coachErrors;
-    },
   },
   actions: {
     async addCoach(context, payload) {
+      const token = localStorage.getItem("token");
+
       const newCoach = {
         firstName: payload.firstName,
         lastName: payload.lastName,
         description: payload.description,
         areas: payload.areas,
         hourlyRate: payload.hourlyRate,
+        token: token,
       };
 
       try {
-        const res = await axios.post("/create-coache", newCoach);
+        const res = await axios.post("/create-coach", newCoach);
         if (res.status === 201) {
           context.commit("addCoach", res.data);
         }
       } catch (error) {
-        context.commit("setError", error.response);
+        throw new Error(
+          `${error.response.data.error} (${error.response.status} ${error.response.statusText})` ||
+            "Somthing went wrong!"
+        );
       }
     },
     async fetchAllCoaches(context) {
@@ -54,7 +56,10 @@ export default {
         const res = await axios.get("/all-coaches");
         context.commit("setCoaches", res.data);
       } catch (error) {
-        context.commit("setError", error.response);
+        throw new Error(
+          `${error.response.data.error} (${error.response.status} ${error.response.statusText})` ||
+            "Somthing went wrong!"
+        );
       }
     },
   },
